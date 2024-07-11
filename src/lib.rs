@@ -55,6 +55,7 @@ use glam::Vec2;
 use itertools::Itertools;
 use rand::Rng;
 use rand::SeedableRng;
+use rand_pcg::Pcg64Mcg;
 
 /// Provides a source of `BlueNoise` in a given area at some density.
 #[derive(Debug, Clone)]
@@ -446,6 +447,12 @@ impl<R: Rng> Iterator for WrappingBlueNoise<R> {
 
         None
     }
+}
+
+/// Generates a list of points within a rectangle centered at the origin.
+pub fn points(half_size: Vec2, min_radius: f32) -> impl Iterator<Item = Vec2> {
+    BlueNoise::<Pcg64Mcg>::new(half_size.x * 2.0, half_size.y * 2.0, min_radius)
+        .map(move |x| x - half_size)
 }
 
 #[cfg(test)]
